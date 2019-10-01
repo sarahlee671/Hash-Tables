@@ -15,6 +15,7 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
 
 
     def _hash(self, key):
@@ -32,7 +33,11 @@ class HashTable:
 
         OPTIONAL STRETCH: Research and implement DJB2
         '''
-        pass
+        hash = 5381
+        for pair in self.storage:
+            hash = (( hash << 5) + hash) + ord(pair)
+
+        return hash % self.capacity
 
 
     def _hash_mod(self, key):
@@ -47,11 +52,22 @@ class HashTable:
         '''
         Store the value with the given key.
 
+        print a warning 
+
         Hash collisions should be handled with Linked List Chaining.
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+
+        if self.storage[index] is not None:
+            if self.storage[index].key != key:
+                print("Warning: Index collision")
+                return
+
+        self.storage[index] = LinkedPair(key, value)
+
+
 
 
 
@@ -63,8 +79,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
 
+        index = self._hash_mod(key)
+
+        if self.storage[index] is None:
+            print("Warning: Key not found")
+            return
+
+        self.storage[index] = None
 
     def retrieve(self, key):
         '''
@@ -74,7 +96,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        pair = self.storage[index]
+
+        if pair is None:
+            return None
+        else:
+            return self.storage[index].value
+        
 
 
     def resize(self):
@@ -84,7 +113,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity *= 2
+        new_storage = [None] * self.capacity
+        for pair in self.storage:
+            if pair is not None:
+                new_index = self._hash_mod(pair.key)
+                new_storage[new_index] = pair
+        
+        self.storage = new_storage
 
 
 
@@ -101,6 +137,10 @@ if __name__ == "__main__":
     print(ht.retrieve("line_1"))
     print(ht.retrieve("line_2"))
     print(ht.retrieve("line_3"))
+
+    #test remove
+    # ht.remove("line_3")
+    # ht.remove("line_3")
 
     # Test resizing
     old_capacity = len(ht.storage)
