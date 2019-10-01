@@ -33,11 +33,11 @@ class HashTable:
 
         OPTIONAL STRETCH: Research and implement DJB2
         '''
-        hash = 5381
-        for pair in self.storage:
-            hash = (( hash << 5) + hash) + ord(pair)
+        # hash = 5381
+        # for pair in self.storage:
+        #     hash = (( hash << 5) + hash) + ord(pair)
 
-        return hash % self.capacity
+        # return hash % self.capacity
 
 
     def _hash_mod(self, key):
@@ -59,13 +59,16 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
-
+        #set the current until the curr.next is None
+        #chain the LinkedPair
         if self.storage[index] is not None:
-            if self.storage[index].key != key:
-                print("Warning: Index collision")
-                return
-
-        self.storage[index] = LinkedPair(key, value)
+            curr = self.storage[index]
+            while curr.next is not None:
+                curr = curr.next
+            curr.next = LinkedPair(key, value)
+            return
+        else:
+            self.storage[index] = LinkedPair(key, value)
 
 
 
