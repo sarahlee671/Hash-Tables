@@ -1,0 +1,6 @@
+[
+  "src/test_hashtable.py::TestHashTable::test_hash_table_insertion_and_retrieval",
+  "src/test_hashtable.py::TestHashTable::test_hash_table_insertion_overwrites_correctly",
+  "src/test_hashtable.py::TestHashTable::test_hash_table_removes_correctly",
+  "src/test_hashtable.py::TestHashTable::test_hash_table_resize"
+]
