@@ -33,12 +33,12 @@ class HashTable:
 
         OPTIONAL STRETCH: Research and implement DJB2
         '''
-        # hash = 5381
-        # for pair in self.storage:
-        #     hash = (( hash << 5) + hash) + ord(pair)
+        hash = 5381
+        for x in self.storage:
+            hash = (( hash << 5) + hash) + ord(x)
 
-        # return hash % self.capacity
-
+        return x % self.capacity
+       
 
     def _hash_mod(self, key):
         '''
@@ -59,14 +59,19 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
-        #set the current until the curr.next is None
-        #chain the LinkedPair
         if self.storage[index] is not None:
-            curr = self.storage[index]
-            while curr.next is not None:
-                curr = curr.next
-            curr.next = LinkedPair(key, value)
-            return
+            pair = self.storage[index]
+            #if the bucket is filled, chain 
+            while pair is not None:
+                if pair.key is key:
+                    pair.value = value
+                    break
+                elif pair.next is None:
+                    pair.next = LinkedPair(key, value)
+                    break
+                else:
+                    pair= pair.next
+
         else:
             self.storage[index] = LinkedPair(key, value)
 
@@ -88,8 +93,17 @@ class HashTable:
         if self.storage[index] is None:
             print("Warning: Key not found")
             return
+        
+        curr = self.storage[index]
+       
+        while curr is not None:
+            if curr.key == key:
+                self.storage[index] = None
+                break
+            else:
+                curr = curr.next
 
-        self.storage[index] = None
+
 
     def retrieve(self, key):
         '''
@@ -102,10 +116,17 @@ class HashTable:
         index = self._hash_mod(key)
         pair = self.storage[index]
 
-        if pair is None:
-            return None
-        else:
-            return self.storage[index].value
+        if pair is not None:
+            curr = self.storage[index]
+
+            while curr is not None:
+                if curr.key is key:
+                    return curr.value
+                else:
+                    curr = curr.next
+
+            else:
+                return None
         
 
 
@@ -118,12 +139,17 @@ class HashTable:
         '''
         self.capacity *= 2
         new_storage = [None] * self.capacity
-        for pair in self.storage:
-            if pair is not None:
-                new_index = self._hash_mod(pair.key)
-                new_storage[new_index] = pair
-        
+        copy_storage = self.storage
         self.storage = new_storage
+
+        for pair in copy_storage:
+            if pair is not None:
+                curr = pair
+                while curr is not None:
+                    self.insert(curr.key, curr.value)
+                    curr = curr.next
+        
+
 
 
 
@@ -150,7 +176,7 @@ if __name__ == "__main__":
     ht.resize()
     new_capacity = len(ht.storage)
 
-    print(f"\nResized from {old_capacity} to {new_capacity}.\n")
+    # print(f"\nResized from {old_capacity} to {new_capacity}.\n")
 
     # Test if data intact after resizing
     print(ht.retrieve("line_1"))
